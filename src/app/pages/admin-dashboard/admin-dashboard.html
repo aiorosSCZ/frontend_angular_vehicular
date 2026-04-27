@@ -1,0 +1,146 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <span>🛡️</span> AsistAuto Master
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link active"><span>📊</span> Dashboard</a>
+      <a class="nav-link"><span>🚗</span> Usuarios</a>
+      <a class="nav-link"><span>🛠️</span> Talleres</a>
+      <a class="nav-link"><span>🆘</span> Incidentes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <header class="main-header">
+      <div class="header-welcome">
+        <h1>Centro de Control Maestro</h1>
+        <p>Bienvenido de vuelta, {{ adminName }}</p>
+      </div>
+    </header>
+
+    <!-- Global Stats -->
+    <div class="metrics-grid">
+      <div class="metric-card gradient-purple">
+        <div class="metric-label">Ganancias Totales</div>
+        <div class="metric-value">Bs. {{ stats.total_recaudado | number:'1.2-2' }}</div>
+        <div class="metric-desc">Ingreso bruto facturado</div>
+      </div>
+      <div class="metric-card gradient-blue">
+        <div class="metric-label">Comisión Plataforma (10%)</div>
+        <div class="metric-value">Bs. {{ stats.ganancia_plataforma | number:'1.2-2' }}</div>
+        <div class="metric-desc">Utilidad neta recaudada</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Incidentes Totales</div>
+        <div class="metric-value">{{ stats.incidentes }}</div>
+        <div class="metric-desc">Llamadas de auxilio registradas</div>
+      </div>
+    </div>
+
+    <!-- Workshops Section -->
+    <div class="data-section">
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Talleres Pendientes de Validación</h3>
+          <span class="badge badge-warning">⚠️ Acción requerida</span>
+        </div>
+        
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Razón Social</th>
+                <th>NIT</th>
+                <th>Dirección</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of talleres">
+                <td *ngIf="t.estado_aprobacion === 'Pendiente'" style="font-weight: 600; color: #f8fafc;">{{ t.razon_social }}</td>
+                <td *ngIf="t.estado_aprobacion === 'Pendiente'">{{ t.nit }}</td>
+                <td *ngIf="t.estado_aprobacion === 'Pendiente'">{{ t.direccion }}</td>
+                <td *ngIf="t.estado_aprobacion === 'Pendiente'">
+                  <span class="status-pill status-pending">{{ t.estado_aprobacion }}</span>
+                </td>
+                <td *ngIf="t.estado_aprobacion === 'Pendiente'">
+                  <div class="actions-wrapper">
+                    <button class="btn-action btn-approve" (click)="aprobarTaller(t.id_taller)">Aprobar</button>
+                    <button class="btn-action btn-reject" (click)="rechazarTaller(t.id_taller)">Rechazar</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registered Workshops History -->
+    <div class="data-section">
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Directorio de Talleres Registrados</h3>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Razón Social</th>
+                <th>NIT</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of talleres">
+                <td>#TL-{{ t.id_taller }}</td>
+                <td>{{ t.razon_social }}</td>
+                <td>{{ t.nit }}</td>
+                <td>
+                  <span class="status-pill" 
+                        [ngClass]="{'status-approved': t.estado_aprobacion === 'Aprobado', 'status-pending': t.estado_aprobacion === 'Pendiente', 'status-rejected': t.estado_aprobacion === 'Rechazado'}">
+                    {{ t.estado_aprobacion }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bitacora de Actividad -->
+    <div class="data-section">
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Historial de Actividad (Bitácora)</h3>
+          <span class="badge badge-info">⏱️ Últimas acciones</span>
+        </div>
+        <div class="timeline-container">
+          <div class="timeline-item" *ngFor="let log of historialAcciones">
+            <div class="timeline-icon">📝</div>
+            <div class="timeline-content">
+              <div class="timeline-header">
+                <span class="timeline-action">{{ log.accion }}</span>
+                <span class="timeline-date">{{ log.fecha_hora | date:'medium' }}</span>
+              </div>
+              <p class="timeline-desc">{{ log.descripcion }}</p>
+              <span class="timeline-user">Realizado por: {{ log.tipo_usuario }}</span>
+            </div>
+          </div>
+          <div *ngIf="historialAcciones.length === 0" class="empty-state">
+            <p>Aún no hay registros en la bitácora.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
