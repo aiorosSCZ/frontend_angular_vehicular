@@ -517,6 +517,8 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async aceptarServicio(solicitud: any) {
+    if (solicitud.procesando) return;
+    solicitud.procesando = true;
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/incidentes/${solicitud.id_incidente}/aceptar`, {
         method: 'POST',
@@ -533,6 +535,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         this.stats.completadosHoy += 1;
         alert('¡Servicio tomado exitosamente!');
       } else {
+        solicitud.procesando = false;
         alert('Error al tomar el servicio.');
       }
     } catch (e) {

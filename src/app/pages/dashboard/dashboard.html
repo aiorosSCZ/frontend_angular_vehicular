@@ -291,8 +291,8 @@
               </div>
 
               <div class="request-actions" style="display: flex; gap: 12px;">
-                <button class="btn btn-primary btn-sm" style="flex: 1; padding: 10px; background: #FF0055; border: none; color: white; border-radius: 8px; font-weight: 600; cursor: pointer;" (click)="aceptarServicio(sol)">
-                  Tomar Servicio
+                <button class="btn btn-primary btn-sm" style="flex: 1; padding: 10px; background: #FF0055; border: none; color: white; border-radius: 8px; font-weight: 600; cursor: pointer;" [disabled]="sol.procesando" (click)="aceptarServicio(sol)">
+                  {{ sol.procesando ? 'Procesando...' : 'Tomar Servicio' }}
                 </button>
               </div>
             </div>
