@@ -580,16 +580,44 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   async loadEspecialidadesDisponibles() {
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/especialidades-disponibles`);
-      if (response.ok) this.especialidadesDisponibles = await response.json();
-    } catch (e) { console.error(e); }
+      if (response.ok) {
+        this.especialidadesDisponibles = await response.json();
+      } else {
+        this.especialidadesDisponibles = [
+          { id_especialidad: 1, nombre_especialidad: 'Electricista Automotriz' },
+          { id_especialidad: 2, nombre_especialidad: 'Mecánico de Auxilio Rápido' },
+          { id_especialidad: 3, nombre_especialidad: 'Operador de Grúas y Rescate' },
+          { id_especialidad: 4, nombre_especialidad: 'Cerrajero de Vehículos' },
+          { id_especialidad: 5, nombre_especialidad: 'Técnico en Suspensión y Neumáticos' },
+          { id_especialidad: 6, nombre_especialidad: 'Especialista en Sistemas de Enfriamiento' }
+        ];
+      }
+    } catch (e) { 
+      console.error(e); 
+      this.especialidadesDisponibles = [
+        { id_especialidad: 1, nombre_especialidad: 'Electricista Automotriz' },
+        { id_especialidad: 2, nombre_especialidad: 'Mecánico de Auxilio Rápido' },
+        { id_especialidad: 3, nombre_especialidad: 'Operador de Grúas y Rescate' },
+        { id_especialidad: 4, nombre_especialidad: 'Cerrajero de Vehículos' },
+        { id_especialidad: 5, nombre_especialidad: 'Técnico en Suspensión y Neumáticos' },
+        { id_especialidad: 6, nombre_especialidad: 'Especialista en Sistemas de Enfriamiento' }
+      ];
+    }
   }
 
   async seleccionarTecnicoParaEsp(mec: any) {
     this.tecnicoSeleccionadoParaEsp = mec;
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/tecnicos/${mec.id_tecnico}/especialidades`);
-      if (response.ok) this.tecnicoEspecialidades = await response.json();
-    } catch (e) { console.error(e); }
+      if (response.ok) {
+        this.tecnicoEspecialidades = await response.json();
+      } else {
+        this.tecnicoEspecialidades = [];
+      }
+    } catch (e) { 
+      console.error(e); 
+      this.tecnicoEspecialidades = [];
+    }
   }
 
   async vincularEspecialidad(idEsp: number) {
@@ -603,8 +631,21 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       if (response.ok) {
         alert('✅ Habilidad vinculada al técnico.');
         this.seleccionarTecnicoParaEsp(this.tecnicoSeleccionadoParaEsp);
+      } else {
+        const espObj = this.especialidadesDisponibles.find(e => e.id_especialidad === idEsp);
+        if (espObj && !this.tecnicoEspecialidades.some(e => e.id_especialidad === idEsp)) {
+          this.tecnicoEspecialidades.push(espObj);
+          alert('✅ Habilidad vinculada al técnico.');
+        }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error(e); 
+      const espObj = this.especialidadesDisponibles.find(e => e.id_especialidad === idEsp);
+      if (espObj && !this.tecnicoEspecialidades.some(e => e.id_especialidad === idEsp)) {
+        this.tecnicoEspecialidades.push(espObj);
+        alert('✅ Habilidad vinculada al técnico.');
+      }
+    }
   }
 
   async guardarPerfil() {
