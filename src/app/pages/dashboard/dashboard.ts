@@ -116,14 +116,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       try {
         this.map = new google.maps.Map(mapElement, {
           center: workshopCoords,
-          zoom: 13,
-          styles: [
-            { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
-            { elementType: 'labels.text.stroke', stylers: [{ color: '#1e293b' }] },
-            { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
-            { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
-            { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] }
-          ]
+          zoom: 13
         });
 
         new google.maps.Marker({
@@ -197,7 +190,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   changeTab(tab: string) {
     this.currentTab = tab;
-    if (tab === 'servicios') {
+    if (tab === 'inicio') {
+      this.initMap();
+    } else if (tab === 'servicios') {
       this.loadServiciosDisponibles();
       this.loadTallerServicios();
     } else if (tab === 'habilidades') {
