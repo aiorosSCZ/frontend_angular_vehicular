@@ -383,7 +383,8 @@
             </div>
             <div class="form-group" style="margin-bottom: 12px;">
               <label style="display:block; margin-bottom: 4px; font-weight: 500;">Correo / Usuario</label>
-              <input type="email" [(ngModel)]="nuevoMecanico.correo" class="form-control" style="width:100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc;" placeholder="Ej. pedro@taller.com">
+              <input type="email" [(ngModel)]="nuevoMecanico.correo" class="form-control" style="width:100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; background: rgba(255,255,255,0.05); color: #94A3B8;" placeholder="Se generará como: nombreapellido_siglas@asiscar.com" readonly>
+              <small style="color: #64748B; font-size: 0.8rem; margin-top: 4px; display: block;">* El sistema asignará el usuario automáticamente con los lineamientos corporativos.</small>
             </div>
             <div class="form-group" style="margin-bottom: 16px;">
               <label style="display:block; margin-bottom: 4px; font-weight: 500;">Contraseña Temporal</label>

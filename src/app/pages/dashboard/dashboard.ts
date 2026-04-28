@@ -358,6 +358,22 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     this.mecanicoError = '';
     this.mecanicoSuccess = false;
 
+    // Generación automática del correo corporativo
+    const nombreLimpio = this.nuevoMecanico.nombres.toLowerCase().trim().replace(/\s+/g, '');
+    const apellidoPaterno = this.nuevoMecanico.apellidos.toLowerCase().trim().split(/\s+/)[0];
+    
+    let siglasTaller = 't';
+    if (this.tallerData.razon_social) {
+      const words = this.tallerData.razon_social.trim().split(/\s+/);
+      if (words.length === 1) {
+        siglasTaller = words[0].substring(0, 2).toLowerCase();
+      } else {
+        siglasTaller = (words[0][0] + words[1][0]).toLowerCase();
+      }
+    }
+    
+    this.nuevoMecanico.correo = `${nombreLimpio}${apellidoPaterno}_${siglasTaller}@asiscar.com`;
+
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/tecnicos`, {
         method: 'POST',
