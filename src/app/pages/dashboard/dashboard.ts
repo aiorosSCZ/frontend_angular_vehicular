@@ -362,27 +362,37 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async registrarMecanico() {
-    this.creandoMecanico = true;
     this.mecanicoError = '';
     this.mecanicoSuccess = false;
 
-    // Generación automática del correo corporativo
-    const nombreLimpio = this.nuevoMecanico.nombres.toLowerCase().trim().replace(/\s+/g, '');
-    const apellidoPaterno = this.nuevoMecanico.apellidos.toLowerCase().trim().split(/\s+/)[0];
-    
-    let siglasTaller = 't';
-    if (this.tallerData.razon_social) {
-      const words = this.tallerData.razon_social.trim().split(/\s+/);
-      if (words.length === 1) {
-        siglasTaller = words[0].substring(0, 2).toLowerCase();
-      } else {
-        siglasTaller = (words[0][0] + words[1][0]).toLowerCase();
-      }
+    if (!this.nuevoMecanico.nombres || !this.nuevoMecanico.nombres.trim()) {
+      this.mecanicoError = 'Debes ingresar el nombre del técnico.';
+      return;
     }
-    
-    this.nuevoMecanico.correo = `${nombreLimpio}${apellidoPaterno}_${siglasTaller}@asiscar.com`;
+    if (!this.nuevoMecanico.apellidos || !this.nuevoMecanico.apellidos.trim()) {
+      this.mecanicoError = 'Debes ingresar el apellido del técnico.';
+      return;
+    }
+
+    this.creandoMecanico = true;
 
     try {
+      // Generación automática del correo corporativo
+      const nombreLimpio = this.nuevoMecanico.nombres.toLowerCase().trim().replace(/\s+/g, '');
+      const apellidoPaterno = this.nuevoMecanico.apellidos.toLowerCase().trim().split(/\s+/)[0];
+      
+      let siglasTaller = 't';
+      if (this.tallerData.razon_social) {
+        const words = this.tallerData.razon_social.trim().split(/\s+/);
+        if (words.length === 1) {
+          siglasTaller = words[0].substring(0, 2).toLowerCase();
+        } else {
+          siglasTaller = (words[0][0] + words[1][0]).toLowerCase();
+        }
+      }
+      
+      this.nuevoMecanico.correo = `${nombreLimpio}${apellidoPaterno}_${siglasTaller}@asiscar.com`;
+
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/tecnicos`, {
         method: 'POST',
         headers: {
@@ -453,9 +463,13 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         this.uploadSuccess = true;
         this.tallerData.foto_nit_url = data.foto_nit_url;
         this.tallerData.foto_local_url = data.foto_local_url;
+        alert('✅ ¡Documentos subidos con éxito!');
+      } else {
+        alert('❌ No se pudieron subir los documentos: ' + (data.detail || 'Intente nuevamente.'));
       }
     } catch (error) {
       console.error("Error subiendo documentos:", error);
+      alert('❌ Error de conexión al subir documentos.');
     } finally {
       this.uploading = false;
     }

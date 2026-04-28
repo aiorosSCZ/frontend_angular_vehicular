@@ -189,11 +189,11 @@ export class RegistroTaller implements AfterViewInit {
           console.log('Registro exitoso', response);
           this.isSuccess = true;
           this.isLoading = false;
+          alert('✅ ¡Tu taller se ha registrado de manera exitosa! Ahora está listo para la validación administrativa.');
 
-          // Pequeña demora para que el usuario vea el mensaje de éxito
           setTimeout(() => {
             this.router.navigate(['/dashboard']);
-          }, 500);
+          }, 100);
         },
         error: (err) => {
           console.error('Error en registro', err);

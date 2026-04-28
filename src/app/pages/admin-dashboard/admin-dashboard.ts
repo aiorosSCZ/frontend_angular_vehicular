@@ -80,11 +80,13 @@ export class AdminDashboard implements OnInit {
         method: 'POST'
       });
       if (response.ok) {
+        alert('✅ ¡Taller aprobado exitosamente!');
         this.loadMetrics();
         this.loadBitacora();
       }
     } catch (e) {
       console.error('Error aprobando taller:', e);
+      alert('❌ Error al aprobar taller.');
     } finally {
       this.procesandoId = null;
       this.cdr.detectChanges();
@@ -99,11 +101,13 @@ export class AdminDashboard implements OnInit {
         method: 'POST'
       });
       if (response.ok) {
+        alert('✅ ¡Solicitud de taller rechazada!');
         this.loadMetrics();
         this.loadBitacora();
       }
     } catch (e) {
       console.error('Error rechazando taller:', e);
+      alert('❌ Error al rechazar taller.');
     } finally {
       this.procesandoId = null;
       this.cdr.detectChanges();
