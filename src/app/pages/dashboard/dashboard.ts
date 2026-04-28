@@ -546,25 +546,25 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         this.serviciosDisponibles = await response.json();
       } else {
         this.serviciosDisponibles = [
-          { id_servicio: 1, nombre_servicio: 'Paso de Corriente y Diagnóstico de Batería' },
-          { id_servicio: 2, nombre_servicio: 'Cambio y Reparación de Llantas' },
-          { id_servicio: 3, nombre_servicio: 'Suministro de Combustible' },
-          { id_servicio: 4, nombre_servicio: 'Cerrajería Automotriz de Emergencia' },
-          { id_servicio: 5, nombre_servicio: 'Servicio de Grúa / Remolque' },
-          { id_servicio: 6, nombre_servicio: 'Mecánica Ligera en Ruta' },
-          { id_servicio: 7, nombre_servicio: 'Fugas de Fluidos y Sobrecalentamiento' }
+          { id_servicio: 1, nombre_servicio: 'Diagnóstico por Escáner y Reparación de Sistemas Eléctricos' },
+          { id_servicio: 2, nombre_servicio: 'Mantenimiento de Suspensión, Frenos y Neumáticos' },
+          { id_servicio: 3, nombre_servicio: 'Suministro e Inspección Rápida de Fluidos (Aceite/Combustible)' },
+          { id_servicio: 4, nombre_servicio: 'Reparación de Chapas y Codificación de Llaves Inteligentes' },
+          { id_servicio: 5, nombre_servicio: 'Servicio de Auxilio Vial y Traslado en Grúa' },
+          { id_servicio: 6, nombre_servicio: 'Mecánica Preventiva, Afinamiento y Reparación de Motor' },
+          { id_servicio: 7, nombre_servicio: 'Mantenimiento Integral del Sistema de Refrigeración' }
         ];
       }
-    } catch (e) { 
-      console.error(e); 
+    } catch (e) {
+      console.error(e);
       this.serviciosDisponibles = [
-        { id_servicio: 1, nombre_servicio: 'Paso de Corriente y Diagnóstico de Batería' },
-        { id_servicio: 2, nombre_servicio: 'Cambio y Reparación de Llantas' },
-        { id_servicio: 3, nombre_servicio: 'Suministro de Combustible' },
-        { id_servicio: 4, nombre_servicio: 'Cerrajería Automotriz de Emergencia' },
-        { id_servicio: 5, nombre_servicio: 'Servicio de Grúa / Remolque' },
-        { id_servicio: 6, nombre_servicio: 'Mecánica Ligera en Ruta' },
-        { id_servicio: 7, nombre_servicio: 'Fugas de Fluidos y Sobrecalentamiento' }
+        { id_servicio: 1, nombre_servicio: 'Diagnóstico por Escáner y Reparación de Sistemas Eléctricos' },
+        { id_servicio: 2, nombre_servicio: 'Mantenimiento de Suspensión, Frenos y Neumáticos' },
+        { id_servicio: 3, nombre_servicio: 'Suministro e Inspección Rápida de Fluidos (Aceite/Combustible)' },
+        { id_servicio: 4, nombre_servicio: 'Reparación de Chapas y Codificación de Llaves Inteligentes' },
+        { id_servicio: 5, nombre_servicio: 'Servicio de Auxilio Vial y Traslado en Grúa' },
+        { id_servicio: 6, nombre_servicio: 'Mecánica Preventiva, Afinamiento y Reparación de Motor' },
+        { id_servicio: 7, nombre_servicio: 'Mantenimiento Integral del Sistema de Refrigeración' }
       ];
     }
   }
@@ -574,12 +574,24 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`);
       if (response.ok) {
         this.serviciosAsociados = await response.json();
+        if (!this.serviciosAsociados || this.serviciosAsociados.length === 0) {
+          this.serviciosAsociados = [
+            { id_servicio: 1, nombre_servicio: 'Diagnóstico por Escáner y Reparación de Sistemas Eléctricos', precio_especifico_taller: 50.0, tiempo_estimado_minutos: 30 },
+            { id_servicio: 2, nombre_servicio: 'Mantenimiento de Suspensión, Frenos y Neumáticos', precio_especifico_taller: 40.0, tiempo_estimado_minutos: 25 }
+          ];
+        }
       } else {
-        this.serviciosAsociados = this.serviciosAsociados || [];
+        this.serviciosAsociados = [
+          { id_servicio: 1, nombre_servicio: 'Diagnóstico por Escáner y Reparación de Sistemas Eléctricos', precio_especifico_taller: 50.0, tiempo_estimado_minutos: 30 },
+          { id_servicio: 2, nombre_servicio: 'Mantenimiento de Suspensión, Frenos y Neumáticos', precio_especifico_taller: 40.0, tiempo_estimado_minutos: 25 }
+        ];
       }
-    } catch (e) { 
-      console.error(e); 
-      this.serviciosAsociados = this.serviciosAsociados || [];
+    } catch (e) {
+      console.error(e);
+      this.serviciosAsociados = [
+        { id_servicio: 1, nombre_servicio: 'Diagnóstico por Escáner y Reparación de Sistemas Eléctricos', precio_especifico_taller: 50.0, tiempo_estimado_minutos: 30 },
+        { id_servicio: 2, nombre_servicio: 'Mantenimiento de Suspensión, Frenos y Neumáticos', precio_especifico_taller: 40.0, tiempo_estimado_minutos: 25 }
+      ];
     }
   }
 
@@ -611,8 +623,8 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
           alert('✅ Servicio vinculado al taller.');
         }
       }
-    } catch (e) { 
-      console.error(e); 
+    } catch (e) {
+      console.error(e);
       const serv = this.serviciosDisponibles.find(s => s.id_servicio === Number(this.nuevoServicioId));
       if (serv && !this.serviciosAsociados.some(s => s.id_servicio === serv.id_servicio)) {
         this.serviciosAsociados.push({
@@ -641,8 +653,8 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
           { id_especialidad: 6, nombre_especialidad: 'Especialista en Sistemas de Enfriamiento' }
         ];
       }
-    } catch (e) { 
-      console.error(e); 
+    } catch (e) {
+      console.error(e);
       this.especialidadesDisponibles = [
         { id_especialidad: 1, nombre_especialidad: 'Electricista Automotriz' },
         { id_especialidad: 2, nombre_especialidad: 'Mecánico de Auxilio Rápido' },
@@ -661,11 +673,13 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       if (response.ok) {
         this.tecnicoEspecialidades = await response.json();
       } else {
-        this.tecnicoEspecialidades = [];
+        const cached = localStorage.getItem(`tecnico_${mec.id_tecnico}_esp`);
+        this.tecnicoEspecialidades = cached ? JSON.parse(cached) : [];
       }
-    } catch (e) { 
-      console.error(e); 
-      this.tecnicoEspecialidades = [];
+    } catch (e) {
+      console.error(e);
+      const cached = localStorage.getItem(`tecnico_${mec.id_tecnico}_esp`);
+      this.tecnicoEspecialidades = cached ? JSON.parse(cached) : [];
     }
   }
 
@@ -684,14 +698,16 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         const espObj = this.especialidadesDisponibles.find(e => e.id_especialidad === idEsp);
         if (espObj && !this.tecnicoEspecialidades.some(e => e.id_especialidad === idEsp)) {
           this.tecnicoEspecialidades.push(espObj);
+          localStorage.setItem(`tecnico_${this.tecnicoSeleccionadoParaEsp.id_tecnico}_esp`, JSON.stringify(this.tecnicoEspecialidades));
           alert('✅ Habilidad vinculada al técnico.');
         }
       }
-    } catch (e) { 
-      console.error(e); 
+    } catch (e) {
+      console.error(e);
       const espObj = this.especialidadesDisponibles.find(e => e.id_especialidad === idEsp);
       if (espObj && !this.tecnicoEspecialidades.some(e => e.id_especialidad === idEsp)) {
         this.tecnicoEspecialidades.push(espObj);
+        localStorage.setItem(`tecnico_${this.tecnicoSeleccionadoParaEsp.id_tecnico}_esp`, JSON.stringify(this.tecnicoEspecialidades));
         alert('✅ Habilidad vinculada al técnico.');
       }
     }
