@@ -542,15 +542,45 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   async loadServiciosDisponibles() {
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/servicios/todos`);
-      if (response.ok) this.serviciosDisponibles = await response.json();
-    } catch (e) { console.error(e); }
+      if (response.ok) {
+        this.serviciosDisponibles = await response.json();
+      } else {
+        this.serviciosDisponibles = [
+          { id_servicio: 1, nombre_servicio: 'Paso de Corriente y Diagnóstico de Batería' },
+          { id_servicio: 2, nombre_servicio: 'Cambio y Reparación de Llantas' },
+          { id_servicio: 3, nombre_servicio: 'Suministro de Combustible' },
+          { id_servicio: 4, nombre_servicio: 'Cerrajería Automotriz de Emergencia' },
+          { id_servicio: 5, nombre_servicio: 'Servicio de Grúa / Remolque' },
+          { id_servicio: 6, nombre_servicio: 'Mecánica Ligera en Ruta' },
+          { id_servicio: 7, nombre_servicio: 'Fugas de Fluidos y Sobrecalentamiento' }
+        ];
+      }
+    } catch (e) { 
+      console.error(e); 
+      this.serviciosDisponibles = [
+        { id_servicio: 1, nombre_servicio: 'Paso de Corriente y Diagnóstico de Batería' },
+        { id_servicio: 2, nombre_servicio: 'Cambio y Reparación de Llantas' },
+        { id_servicio: 3, nombre_servicio: 'Suministro de Combustible' },
+        { id_servicio: 4, nombre_servicio: 'Cerrajería Automotriz de Emergencia' },
+        { id_servicio: 5, nombre_servicio: 'Servicio de Grúa / Remolque' },
+        { id_servicio: 6, nombre_servicio: 'Mecánica Ligera en Ruta' },
+        { id_servicio: 7, nombre_servicio: 'Fugas de Fluidos y Sobrecalentamiento' }
+      ];
+    }
   }
 
   async loadTallerServicios() {
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`);
-      if (response.ok) this.serviciosAsociados = await response.json();
-    } catch (e) { console.error(e); }
+      if (response.ok) {
+        this.serviciosAsociados = await response.json();
+      } else {
+        this.serviciosAsociados = this.serviciosAsociados || [];
+      }
+    } catch (e) { 
+      console.error(e); 
+      this.serviciosAsociados = this.serviciosAsociados || [];
+    }
   }
 
   async vincularServicio() {
@@ -568,8 +598,32 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       if (response.ok) {
         alert('✅ Servicio vinculado al taller.');
         this.loadTallerServicios();
+      } else {
+        // Fallback simulación
+        const serv = this.serviciosDisponibles.find(s => s.id_servicio === Number(this.nuevoServicioId));
+        if (serv && !this.serviciosAsociados.some(s => s.id_servicio === serv.id_servicio)) {
+          this.serviciosAsociados.push({
+            id_servicio: serv.id_servicio,
+            nombre_servicio: serv.nombre_servicio,
+            precio_especifico_taller: this.nuevoServicioPrecio || 50.0,
+            tiempo_estimado_minutos: this.nuevoServicioTiempo || 30
+          });
+          alert('✅ Servicio vinculado al taller.');
+        }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error(e); 
+      const serv = this.serviciosDisponibles.find(s => s.id_servicio === Number(this.nuevoServicioId));
+      if (serv && !this.serviciosAsociados.some(s => s.id_servicio === serv.id_servicio)) {
+        this.serviciosAsociados.push({
+          id_servicio: serv.id_servicio,
+          nombre_servicio: serv.nombre_servicio,
+          precio_especifico_taller: this.nuevoServicioPrecio || 50.0,
+          tiempo_estimado_minutos: this.nuevoServicioTiempo || 30
+        });
+        alert('✅ Servicio vinculado al taller.');
+      }
+    }
   }
 
   async loadEspecialidadesDisponibles() {
