@@ -252,6 +252,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         console.error('Error dibujando marcador de emergencia:', e);
       }
     }
+    
+    // Forzar actualización de la vista de Angular
+    this.cdr.detectChanges();
   }
 
   toggleNotificaciones() {
