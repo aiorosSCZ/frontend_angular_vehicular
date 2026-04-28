@@ -443,71 +443,13 @@
             <!-- Empty State -->
             <div class="empty-state" *ngIf="mecanicos.length === 0" style="text-align: center; padding: 40px 20px;">
               <span class="empty-icon" style="font-size: 2rem; display: block; margin-bottom: 12px;">👥</span>
-              <p style="color: #666;">No hay mecánicos registrados aún.</p>
+              <p style="color: #94A3B8;">No hay mecánicos registrados aún.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- VISTA 4: ESPECIALIDADES DE SERVICIOS -->
-    <!-- ========================================== -->
-    <div class="dashboard-body animate-fade-in" *ngIf="tallerData.estado_aprobacion === 'Aprobado' && currentTab === 'servicios'">
-      <div class="card glass-panel" style="max-width: 800px; margin: 0 auto; padding: 24px; border: 1px solid rgba(255,255,255,0.1);">
-        <div class="card-header" style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
-          <h3 style="color: white; margin: 0;">Configurar Especialidades del Taller</h3>
-          <span class="badge info" style="background: rgba(0, 102, 255, 0.15); color: #0066FF; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">Áreas de Atención</span>
-        </div>
-        <p class="card-desc" style="color: #94A3B8; margin-bottom: 24px; font-size: 0.95rem;">Marca los servicios mecánicos que tu taller está capacitado para socorrer en ruta.</p>
-        
-        <div class="services-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px;">
-          <div class="service-item" *ngFor="let s of serviciosTodos" 
-               [style.border]="serviciosSeleccionados.includes(s.id_servicio) ? '2px solid #FF0055' : '1px solid rgba(255,255,255,0.1)'"
-               [style.background]="serviciosSeleccionados.includes(s.id_servicio) ? 'rgba(255,0,85,0.05)' : 'rgba(255,255,255,0.02)'"
-               style="padding: 16px; border-radius: 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px;"
-               (click)="toggleServicio(s.id_servicio)">
-            
-            <div class="checkbox-indicator" 
-                 [style.background]="serviciosSeleccionados.includes(s.id_servicio) ? '#FF0055' : 'transparent'"
-                 style="width: 20px; height: 20px; border: 2px solid #FF0055; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-              <span *ngIf="serviciosSeleccionados.includes(s.id_servicio)" style="color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
-            </div>
-            
-            <span style="color: #F8FAFC; font-weight: 600; font-size: 0.95rem;">{{ s.nombre_servicio }}</span>
-          </div>
-        </div>
-
-        <!-- Configuración de Horario -->
-        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; margin-top: 24px;">
-          <h4 style="color: white; margin-bottom: 12px;">Gestión de Horarios Operativos</h4>
-          
-          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-            <input type="checkbox" id="check247" [(ngModel)]="es_24_7" style="width: 18px; height: 18px; accent-color: #FF0055;">
-            <label for="check247" style="color: #CBD5E1; font-weight: 500;">Ofrecemos asistencia de auxilio mecánico las 24 horas del día (24/7)</label>
-          </div>
-
-          <div *ngIf="!es_24_7" style="display: flex; gap: 24px; margin-bottom: 24px;">
-            <div style="flex: 1;">
-              <label style="color: #94A3B8; font-size: 0.85rem; display: block; margin-bottom: 6px;">Hora de Apertura</label>
-              <input type="text" [(ngModel)]="horario_apertura" class="form-control" style="width:100%; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1);" placeholder="Ej: 08:00">
-            </div>
-            <div style="flex: 1;">
-              <label style="color: #94A3B8; font-size: 0.85rem; display: block; margin-bottom: 6px;">Hora de Cierre</label>
-              <input type="text" [(ngModel)]="horario_cierre" class="form-control" style="width:100%; padding: 10px; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1);" placeholder="Ej: 19:00">
-            </div>
-          </div>
-          
-          <button class="btn btn-outline" style="width: 100%; border: 1px solid #FF0055; color: #FF0055; background: transparent; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 16px;" (click)="guardarHorario()">
-            Guardar Horario Laboral
-          </button>
-        </div>
-
-        <button class="btn btn-primary" style="background: #FF0055; width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; color: white; font-size: 1rem;" (click)="guardarServicios()">
-          Guardar Cambios de Especialidades
-        </button>
-      </div>
-    </div>
     <!-- ========================================== -->
     <!-- VISTA 5: HISTORIAL DE INCIDENTES -->
     <!-- ========================================== -->
@@ -600,47 +542,47 @@
     <!-- ========================================== -->
     <!-- VISTA 7: SERVICIOS DEL TALLER -->
     <!-- ========================================== -->
-    <div class="dashboard-body animate-fade-in" *ngIf="tallerData.estado_aprobacion === 'Aprobado' && currentTab === 'servicios'">
-      <div class="card glass-panel" style="padding: 24px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px;">
-        <h3 style="color: white; margin-bottom: 12px;">Asociar Nuevo Servicio</h3>
-        <p style="color: #94A3B8; margin-bottom: 20px;">Vincula un servicio maestro a tu taller especificando precios y tiempos.</p>
+  <div class="dashboard-body animate-fade-in" *ngIf="tallerData.estado_aprobacion === 'Aprobado' && currentTab === 'servicios'">
+      <div class="card" style="padding: 24px; border: 1px solid #E2E8F0; background: white; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+        <h3 style="color: #0F172A; margin-bottom: 12px; font-weight: 700;">Asociar Nuevo Servicio</h3>
+        <p style="color: #64748B; margin-bottom: 20px;">Vincula un servicio maestro a tu taller especificando precios y tiempos estimados.</p>
         
         <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end;">
           <div style="flex: 1; min-width: 200px;">
-            <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Servicio</label>
-            <select [(ngModel)]="nuevoServicioId" style="width:100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+            <label style="color: #475569; display: block; margin-bottom: 6px; font-weight: 600;">Servicio</label>
+            <select [(ngModel)]="nuevoServicioId" style="width:100%; padding: 12px; border-radius: 8px; background: #F8FAFC; color: #1E293B; border: 1px solid #CBD5E1;">
               <option [value]="null">-- Seleccionar Servicio --</option>
-              <option *ngFor="let s of serviciosDisponibles" [value]="s.id_servicio">{{ s.nombre_servicio }}</option>
+              <option *ngFor="let s of serviciosDisponibles" [value]="s.id_servicio" style="color: #1E293B;">{{ s.nombre_servicio }}</option>
             </select>
           </div>
-          <div style="width: 120px;">
-            <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Precio (Bs.)</label>
-            <input type="number" [(ngModel)]="nuevoServicioPrecio" style="width:100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+          <div style="width: 150px;">
+            <label style="color: #475569; display: block; margin-bottom: 6px; font-weight: 600;">Precio (Bs.)</label>
+            <input type="number" [(ngModel)]="nuevoServicioPrecio" style="width:100%; padding: 12px; border-radius: 8px; background: #F8FAFC; color: #1E293B; border: 1px solid #CBD5E1;">
           </div>
           <div style="width: 150px;">
-            <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Tiempo (Min.)</label>
-            <input type="number" [(ngModel)]="nuevoServicioTiempo" style="width:100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+            <label style="color: #475569; display: block; margin-bottom: 6px; font-weight: 600;">Tiempo (Min.)</label>
+            <input type="number" [(ngModel)]="nuevoServicioTiempo" style="width:100%; padding: 12px; border-radius: 8px; background: #F8FAFC; color: #1E293B; border: 1px solid #CBD5E1;">
           </div>
-          <button class="btn btn-primary" (click)="vincularServicio()" style="padding: 11px 24px;">Vincular</button>
+          <button class="btn" (click)="vincularServicio()" style="padding: 12px 24px; background: #FF0055; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s;">Vincular</button>
         </div>
       </div>
 
-      <div class="card glass-panel" style="padding: 24px; border: 1px solid rgba(255,255,255,0.1);">
-        <h3 style="color: white; margin-bottom: 16px;">Mis Servicios Ofrecidos</h3>
+      <div class="card" style="padding: 24px; border: 1px solid #E2E8F0; background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+        <h3 style="color: #0F172A; margin-bottom: 16px; font-weight: 700;">Mis Servicios Ofrecidos</h3>
         <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; color: #CBD5E1;">
+          <table style="width: 100%; border-collapse: collapse; color: #1E293B;">
             <thead>
-              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: #94A3B8;">
+              <tr style="border-bottom: 1px solid #E2E8F0; color: #475569; font-weight: 600;">
                 <th style="padding: 12px 8px; text-align: left;">Servicio</th>
                 <th style="padding: 12px 8px; text-align: right;">Precio</th>
                 <th style="padding: 12px 8px; text-align: right;">Tiempo Est.</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let s of serviciosAsociados" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <td style="padding: 16px 8px;">{{ s.nombre_servicio }}</td>
-                <td style="padding: 16px 8px; text-align: right; font-weight: bold; color: #10B981;">Bs. {{ s.precio_especifico_taller }}</td>
-                <td style="padding: 16px 8px; text-align: right;">{{ s.tiempo_estimado_minutos }} min</td>
+              <tr *ngFor="let s of serviciosAsociados" style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 16px 8px; color: #334155;">{{ s.nombre_servicio }}</td>
+                <td style="padding: 16px 8px; text-align: right; font-weight: bold; color: #FF0055;">Bs. {{ s.precio_especifico_taller }}</td>
+                <td style="padding: 16px 8px; text-align: right; color: #64748B;">{{ s.tiempo_estimado_minutos }} min</td>
               </tr>
               <tr *ngIf="serviciosAsociados.length === 0">
                 <td colspan="3" style="text-align: center; padding: 32px; color: #64748B;">No has configurado servicios.</td>
