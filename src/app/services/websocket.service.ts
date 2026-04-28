@@ -16,7 +16,7 @@ export class WebsocketService {
   connect(idTaller: number): void {
     if (this.socket && this.socket.readyState === WebSocket.OPEN) return;
 
-    const wsUrl = `wss://backend-fastapi-4g1h.onrender.com/ws/talleres/${idTaller}`;
+    const wsUrl = `wss://backend-fastapi-su7t.onrender.com/ws/talleres/${idTaller}`;
     this.socket = new WebSocket(wsUrl);
 
     this.socket.onopen = () => {

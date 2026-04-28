@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = `https://backend-fastapi-4g1h.onrender.com/api`;
+  private apiUrl = `https://backend-fastapi-su7t.onrender.com/api`;
 
   constructor(private http: HttpClient) { }
 
