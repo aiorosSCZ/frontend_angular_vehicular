@@ -59,6 +59,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   especialidadesDisponibles: any[] = [];
   tecnicoSeleccionadoParaEsp: any = null;
   tecnicoEspecialidades: any[] = [];
+  editandoEspecialidades: boolean = false;
 
   nuevoMecanico = {
     nombres: '',
@@ -668,6 +669,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async seleccionarTecnicoParaEsp(mec: any) {
     this.tecnicoSeleccionadoParaEsp = mec;
+    this.editandoEspecialidades = false;
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/tecnicos/${mec.id_tecnico}/especialidades`);
       if (response.ok) {

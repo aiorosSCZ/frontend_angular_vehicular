@@ -630,19 +630,30 @@
 
         <!-- Habilidades del Técnico -->
         <div class="card" style="flex: 1; min-width: 300px; padding: 24px; border: 1px solid #E2E8F0; background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-          <h3 style="color: #0F172A; margin-bottom: 8px; font-weight: 700;">Asignar Habilidades</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="color: #0F172A; font-weight: 700; margin: 0;">Asignar Habilidades</h3>
+            <button *ngIf="tecnicoSeleccionadoParaEsp" 
+                    (click)="editandoEspecialidades = !editandoEspecialidades" 
+                    style="background: #FF0055; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">
+              {{ editandoEspecialidades ? '🔒 Finalizar Edición' : '✏️ Editar Habilidades' }}
+            </button>
+          </div>
+          
           <p style="color: #475569; margin-bottom: 24px;" *ngIf="tecnicoSeleccionadoParaEsp">Gestionando habilidades para: <span style="color: #FF0055; font-weight: bold;">{{ tecnicoSeleccionadoParaEsp.nombres }}</span></p>
           <p style="color: #64748B; padding: 32px 0; text-align: center;" *ngIf="!tecnicoSeleccionadoParaEsp">👈 Elige un técnico a la izquierda.</p>
 
           <div *ngIf="tecnicoSeleccionadoParaEsp">
-            <h4 style="color: #334155; margin-bottom: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; font-weight: 600;">Añadir Destreza</h4>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px;">
-              <button *ngFor="let esp of especialidadesDisponibles" 
-                      class="btn" 
-                      style="color: #FF0055; border: 1px solid #FF0055; background: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
-                      (click)="vincularEspecialidad(esp.id_especialidad)">
-                ➕ {{ esp.nombre_especialidad }}
-              </button>
+            <!-- Solo visible en modo edición -->
+            <div *ngIf="editandoEspecialidades" style="margin-bottom: 32px; background: #FFF5F7; padding: 16px; border-radius: 8px; border: 1px dashed #FF0055;">
+              <h4 style="color: #FF0055; margin-bottom: 12px; font-weight: 600; margin-top: 0;">Añadir Destreza (Modo Edición Activo)</h4>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button *ngFor="let esp of especialidadesDisponibles" 
+                        class="btn" 
+                        style="color: #FF0055; border: 1px solid #FF0055; background: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
+                        (click)="vincularEspecialidad(esp.id_especialidad)">
+                  ➕ {{ esp.nombre_especialidad }}
+                </button>
+              </div>
             </div>
 
             <h4 style="color: #334155; margin-bottom: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; font-weight: 600;">Habilidades Actuales</h4>
