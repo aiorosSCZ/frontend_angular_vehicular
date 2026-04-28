@@ -20,7 +20,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     razon_social: '',
     nit: '',
     direccion: '',
-    estado_aprobacion: 'Pendiente',
+    estado_aprobacion: '',
     foto_nit_url: null as string | null,
     foto_local_url: null as string | null,
     ubicacion_base_latitud: null as number | null,
@@ -546,7 +546,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async loadServiciosDisponibles() {
     try {
-      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/servicios-disponibles`);
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/servicios/todos`);
       if (response.ok) this.serviciosDisponibles = await response.json();
     } catch (e) { console.error(e); }
   }

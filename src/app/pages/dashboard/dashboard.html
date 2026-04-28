@@ -242,24 +242,24 @@
           
           <div class="requests-list" style="max-height: 500px; overflow-y: auto;">
             <!-- Solicitudes Reales en Tiempo Real (Fase 3) -->
-            <div class="request-item premium-card" *ngFor="let sol of solicitudes" style="border-left: 5px solid #FF0055; margin-bottom: 16px; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 12px;">
+            <div class="request-item premium-card" *ngFor="let sol of solicitudes" style="border-left: 5px solid #FF0055; margin-bottom: 16px; background: #F8FAFC; padding: 16px; border-radius: 12px; border: 1px solid #E2E8F0; border-left-width: 5px;">
               <div class="request-header" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <span class="priority-badge high" style="background: rgba(255,0,85,0.15); color: #FF0055; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">{{ sol.nivel_prioridad }}</span>
-                <span class="distance" style="color: #94A3B8; font-size: 0.85rem;">📍 A {{ sol.distancia_km }} km</span>
+                <span class="priority-badge high" style="background: rgba(255,0,85,0.1); color: #FF0055; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">{{ sol.nivel_prioridad }}</span>
+                <span class="distance" style="color: #64748B; font-size: 0.85rem;">📍 A {{ sol.distancia_km }} km</span>
               </div>
               <div class="request-body">
-                <h4 style="margin: 8px 0; color: #FFFFFF; font-size: 1.1rem;">{{ sol.tipo_problema }}</h4>
-                <p class="car-info" style="color: #64748B; font-size: 0.9rem; margin-bottom: 12px;">👤 {{ sol.cliente }}</p>
+                <h4 style="margin: 8px 0; color: #1E293B; font-size: 1.1rem; font-weight: 700;">{{ sol.tipo_problema }}</h4>
+                <p class="car-info" style="color: #475569; font-size: 0.9rem; margin-bottom: 12px;">👤 {{ sol.cliente }}</p>
                 <div class="ai-box" style="background: rgba(255, 0, 85, 0.03); border-left: 4px solid #FF0055; padding: 12px; border-radius: 4px 12px 12px 4px; margin-bottom: 16px;">
                   <div class="ai-title" style="font-weight: 700; color: #FF0055; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">🤖 Diagnóstico IA</div>
-                  <p class="ai-summary" style="font-size: 0.9rem; color: #CBD5E1; font-style: italic; margin: 0;">{{ sol.evaluacion_ia || 'Calculando diagnóstico...' }}</p>
+                  <p class="ai-summary" style="font-size: 0.9rem; color: #334155; font-style: italic; margin: 0;">{{ sol.evaluacion_ia || 'Calculando diagnóstico...' }}</p>
                   
-                  <div *ngIf="sol.transcripcion_audio" style="margin-top: 8px; font-size: 0.85rem; color: #94A3B8;">
+                  <div *ngIf="sol.transcripcion_audio" style="margin-top: 8px; font-size: 0.85rem; color: #475569;">
                     <strong>Transcripción:</strong> "{{ sol.transcripcion_audio }}"
                   </div>
 
                   <div *ngIf="sol.url_foto_evidencia" style="margin-top: 10px;">
-                    <img [src]="sol.url_foto_evidencia" style="max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);" alt="Evidencia">
+                    <img [src]="sol.url_foto_evidencia" style="max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid #E2E8F0;" alt="Evidencia">
                   </div>
                   
                   <div *ngIf="sol.url_audio_evidencia" style="margin-top: 10px;">
@@ -269,10 +269,10 @@
               </div>
               <!-- Selector de Técnico -->
               <div style="margin-bottom: 12px; width: 100%;">
-                <label style="color: #94A3B8; font-size: 0.85rem; display: block; margin-bottom: 4px;">Asignar Técnico:</label>
-                <select [(ngModel)]="sol.id_tecnico_seleccionado" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.4); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
-                  <option [value]="null">-- Selección Automática --</option>
-                  <option *ngFor="let m of mecanicos" [value]="m.id_tecnico">
+                <label style="color: #475569; font-size: 0.85rem; display: block; margin-bottom: 4px; font-weight: 600;">Asignar Técnico:</label>
+                <select [(ngModel)]="sol.id_tecnico_seleccionado" style="width: 100%; padding: 12px; border-radius: 8px; background: white; color: #1E293B; border: 1px solid #CBD5E1; font-size: 0.9rem;">
+                  <option [value]="null" style="color: #1E293B;">-- Selección Automática --</option>
+                  <option *ngFor="let m of mecanicos" [value]="m.id_tecnico" style="color: #1E293B;">
                     🔧 {{ m.nombres }} {{ m.apellidos }} ({{ m.estado_operativo }})
                   </option>
                 </select>
@@ -589,51 +589,47 @@
               </tr>
             </tbody>
           </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- VISTA 8: HABILIDADES DE TÉCNICOS -->
-    <!-- ========================================== -->
-    <div class="dashboard-body animate-fade-in" *ngIf="tallerData.estado_aprobacion === 'Aprobado' && currentTab === 'habilidades'">
+            <div class="dashboard-body animate-fade-in" *ngIf="tallerData.estado_aprobacion === 'Aprobado' && currentTab === 'habilidades'">
       <div style="display: flex; gap: 24px; flex-wrap: wrap;">
         <!-- Lista de Técnicos -->
-        <div class="card glass-panel" style="flex: 1; min-width: 300px; padding: 24px; border: 1px solid rgba(255,255,255,0.1);">
-          <h3 style="color: white; margin-bottom: 16px;">Selecciona un Técnico</h3>
+        <div class="card" style="flex: 1; min-width: 300px; padding: 24px; border: 1px solid #E2E8F0; background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+          <h3 style="color: #0F172A; margin-bottom: 16px; font-weight: 700;">Selecciona un Técnico</h3>
           <div style="display: flex; flex-direction: column; gap: 12px;">
             <div *ngFor="let mec of mecanicos" 
                  (click)="seleccionarTecnicoParaEsp(mec)"
-                 [style.background]="tecnicoSeleccionadoParaEsp?.id_tecnico === mec.id_tecnico ? 'rgba(255, 0, 85, 0.1)' : 'rgba(255,255,255,0.03)'"
-                 [style.border-color]="tecnicoSeleccionadoParaEsp?.id_tecnico === mec.id_tecnico ? '#FF0055' : 'rgba(255,255,255,0.1)'"
-                 style="padding: 16px; border-radius: 12px; border: 1px solid; cursor: pointer; transition: all 0.3s;">
-              <strong style="color: white; font-size: 1.05rem;">{{ mec.nombres }} {{ mec.apellidos }}</strong>
+                 [style.background]="tecnicoSeleccionadoParaEsp?.id_tecnico === mec.id_tecnico ? 'rgba(255, 0, 85, 0.05)' : '#F8FAFC'"
+                 [style.border-color]="tecnicoSeleccionadoParaEsp?.id_tecnico === mec.id_tecnico ? '#FF0055' : '#E2E8F0'"
+                 style="padding: 16px; border-radius: 12px; border: 1px solid; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column;">
+              <strong style="color: #1E293B; font-size: 1.05rem;">{{ mec.nombres }} {{ mec.apellidos }}</strong>
               <div style="color: #64748B; font-size: 0.85rem; margin-top: 4px;">📞 {{ mec.telefono_contacto }}</div>
+            </div>
+            <div *ngIf="mecanicos.length === 0" style="color: #64748B; font-style: italic; text-align: center; padding: 20px;">
+              No hay técnicos registrados.
             </div>
           </div>
         </div>
 
         <!-- Habilidades del Técnico -->
-        <div class="card glass-panel" style="flex: 1; min-width: 300px; padding: 24px; border: 1px solid rgba(255,255,255,0.1);">
-          <h3 style="color: white; margin-bottom: 8px;">Asignar Habilidades</h3>
-          <p style="color: #94A3B8; margin-bottom: 24px;" *ngIf="tecnicoSeleccionadoParaEsp">Gestionando habilidades para: <span style="color: #FF0055; font-weight: bold;">{{ tecnicoSeleccionadoParaEsp.nombres }}</span></p>
+        <div class="card" style="flex: 1; min-width: 300px; padding: 24px; border: 1px solid #E2E8F0; background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+          <h3 style="color: #0F172A; margin-bottom: 8px; font-weight: 700;">Asignar Habilidades</h3>
+          <p style="color: #475569; margin-bottom: 24px;" *ngIf="tecnicoSeleccionadoParaEsp">Gestionando habilidades para: <span style="color: #FF0055; font-weight: bold;">{{ tecnicoSeleccionadoParaEsp.nombres }}</span></p>
           <p style="color: #64748B; padding: 32px 0; text-align: center;" *ngIf="!tecnicoSeleccionadoParaEsp">👈 Elige un técnico a la izquierda.</p>
 
           <div *ngIf="tecnicoSeleccionadoParaEsp">
-            <h4 style="color: white; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">Añadir Destreza</h4>
+            <h4 style="color: #334155; margin-bottom: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; font-weight: 600;">Añadir Destreza</h4>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px;">
               <button *ngFor="let esp of especialidadesDisponibles" 
-                      class="btn btn-outline btn-sm" 
-                      style="color: white; border-color: rgba(255,255,255,0.2);"
+                      class="btn" 
+                      style="color: #FF0055; border: 1px solid #FF0055; background: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;"
                       (click)="vincularEspecialidad(esp.id_especialidad)">
                 ➕ {{ esp.nombre_especialidad }}
               </button>
             </div>
 
-            <h4 style="color: white; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">Habilidades Actuales</h4>
+            <h4 style="color: #334155; margin-bottom: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; font-weight: 600;">Habilidades Actuales</h4>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <span *ngFor="let esp of tecnicoEspecialidades" 
-                    style="background: rgba(16, 185, 129, 0.15); color: #10B981; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    style="background: #ECFDF5; color: #10B981; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; border: 1px solid #A7F3D0;">
                 🛡️ {{ esp.nombre_especialidad }}
               </span>
               <div *ngIf="tecnicoEspecialidades.length === 0" style="color: #64748B; font-style: italic;">No tiene habilidades registradas.</div>
