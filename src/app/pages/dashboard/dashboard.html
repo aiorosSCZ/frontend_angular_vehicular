@@ -26,13 +26,23 @@
         <span class="lock-icon" *ngIf="tallerData.estado_aprobacion === 'Pendiente'">🔒</span>
       </a>
       <a class="nav-item" [class.locked]="tallerData.estado_aprobacion === 'Pendiente'" [class.active]="currentTab === 'servicios'" (click)="changeTab('servicios')">
+        <span class="icon">🏬</span>
+        <span>Servicios Taller</span>
+        <span class="lock-icon" *ngIf="tallerData.estado_aprobacion === 'Pendiente'">🔒</span>
+      </a>
+      <a class="nav-item" [class.locked]="tallerData.estado_aprobacion === 'Pendiente'" [class.active]="currentTab === 'habilidades'" (click)="changeTab('habilidades')">
         <span class="icon">🔧</span>
-        <span>Especialidades</span>
+        <span>Habilidades Técnicos</span>
         <span class="lock-icon" *ngIf="tallerData.estado_aprobacion === 'Pendiente'">🔒</span>
       </a>
       <a class="nav-item" [class.locked]="tallerData.estado_aprobacion === 'Pendiente'" [class.active]="currentTab === 'pagos'" (click)="changeTab('pagos')">
         <span class="icon">💰</span>
         <span>Pagos</span>
+        <span class="lock-icon" *ngIf="tallerData.estado_aprobacion === 'Pendiente'">🔒</span>
+      </a>
+      <a class="nav-item" [class.locked]="tallerData.estado_aprobacion === 'Pendiente'" [class.active]="currentTab === 'perfil'" (click)="changeTab('perfil')">
+        <span class="icon">⚙️</span>
+        <span>Configuración</span>
         <span class="lock-icon" *ngIf="tallerData.estado_aprobacion === 'Pendiente'">🔒</span>
       </a>
     </nav>
@@ -582,7 +592,143 @@
             </tbody>
           </table>
         </div>
+      <!-- ========================================== -->
+    <!-- VISTA 7: SERVICIOS DEL TALLER -->
+    <!-- ========================================== -->
+    <div class="dashboard-body animate-fade-in" *ngIf="tallerData.estado_aprobacion === 'Aprobado' && currentTab === 'servicios'">
+      <div class="card glass-panel" style="padding: 24px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px;">
+        <h3 style="color: white; margin-bottom: 12px;">Asociar Nuevo Servicio</h3>
+        <p style="color: #94A3B8; margin-bottom: 20px;">Vincula un servicio maestro a tu taller especificando precios y tiempos.</p>
+        
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end;">
+          <div style="flex: 1; min-width: 200px;">
+            <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Servicio</label>
+            <select [(ngModel)]="nuevoServicioId" style="width:100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+              <option [value]="null">-- Seleccionar Servicio --</option>
+              <option *ngFor="let s of serviciosDisponibles" [value]="s.id_servicio">{{ s.nombre_servicio }}</option>
+            </select>
+          </div>
+          <div style="width: 120px;">
+            <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Precio (Bs.)</label>
+            <input type="number" [(ngModel)]="nuevoServicioPrecio" style="width:100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+          </div>
+          <div style="width: 150px;">
+            <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Tiempo (Min.)</label>
+            <input type="number" [(ngModel)]="nuevoServicioTiempo" style="width:100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+          </div>
+          <button class="btn btn-primary" (click)="vincularServicio()" style="padding: 11px 24px;">Vincular</button>
+        </div>
       </div>
+
+      <div class="card glass-panel" style="padding: 24px; border: 1px solid rgba(255,255,255,0.1);">
+        <h3 style="color: white; margin-bottom: 16px;">Mis Servicios Ofrecidos</h3>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; color: #CBD5E1;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: #94A3B8;">
+                <th style="padding: 12px 8px; text-align: left;">Servicio</th>
+                <th style="padding: 12px 8px; text-align: right;">Precio</th>
+                <th style="padding: 12px 8px; text-align: right;">Tiempo Est.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of serviciosAsociados" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 16px 8px;">{{ s.nombre_servicio }}</td>
+                <td style="padding: 16px 8px; text-align: right; font-weight: bold; color: #10B981;">Bs. {{ s.precio_especifico_taller }}</td>
+                <td style="padding: 16px 8px; text-align: right;">{{ s.tiempo_estimado_minutos }} min</td>
+              </tr>
+              <tr *ngIf="serviciosAsociados.length === 0">
+                <td colspan="3" style="text-align: center; padding: 32px; color: #64748B;">No has configurado servicios.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VISTA 8: HABILIDADES DE TÉCNICOS -->
+    <!-- ========================================== -->
+    <div class="dashboard-body animate-fade-in" *ngIf="tallerData.estado_aprobacion === 'Aprobado' && currentTab === 'habilidades'">
+      <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+        <!-- Lista de Técnicos -->
+        <div class="card glass-panel" style="flex: 1; min-width: 300px; padding: 24px; border: 1px solid rgba(255,255,255,0.1);">
+          <h3 style="color: white; margin-bottom: 16px;">Selecciona un Técnico</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div *ngFor="let mec of mecanicos" 
+                 (click)="seleccionarTecnicoParaEsp(mec)"
+                 [style.background]="tecnicoSeleccionadoParaEsp?.id_tecnico === mec.id_tecnico ? 'rgba(255, 0, 85, 0.1)' : 'rgba(255,255,255,0.03)'"
+                 [style.border-color]="tecnicoSeleccionadoParaEsp?.id_tecnico === mec.id_tecnico ? '#FF0055' : 'rgba(255,255,255,0.1)'"
+                 style="padding: 16px; border-radius: 12px; border: 1px solid; cursor: pointer; transition: all 0.3s;">
+              <strong style="color: white; font-size: 1.05rem;">{{ mec.nombres }} {{ mec.apellidos }}</strong>
+              <div style="color: #64748B; font-size: 0.85rem; margin-top: 4px;">📞 {{ mec.telefono_contacto }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Habilidades del Técnico -->
+        <div class="card glass-panel" style="flex: 1; min-width: 300px; padding: 24px; border: 1px solid rgba(255,255,255,0.1);">
+          <h3 style="color: white; margin-bottom: 8px;">Asignar Habilidades</h3>
+          <p style="color: #94A3B8; margin-bottom: 24px;" *ngIf="tecnicoSeleccionadoParaEsp">Gestionando habilidades para: <span style="color: #FF0055; font-weight: bold;">{{ tecnicoSeleccionadoParaEsp.nombres }}</span></p>
+          <p style="color: #64748B; padding: 32px 0; text-align: center;" *ngIf="!tecnicoSeleccionadoParaEsp">👈 Elige un técnico a la izquierda.</p>
+
+          <div *ngIf="tecnicoSeleccionadoParaEsp">
+            <h4 style="color: white; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">Añadir Destreza</h4>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px;">
+              <button *ngFor="let esp of especialidadesDisponibles" 
+                      class="btn btn-outline btn-sm" 
+                      style="color: white; border-color: rgba(255,255,255,0.2);"
+                      (click)="vincularEspecialidad(esp.id_especialidad)">
+                ➕ {{ esp.nombre_especialidad }}
+              </button>
+            </div>
+
+            <h4 style="color: white; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">Habilidades Actuales</h4>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span *ngFor="let esp of tecnicoEspecialidades" 
+                    style="background: rgba(16, 185, 129, 0.15); color: #10B981; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(16, 185, 129, 0.3);">
+                🛡️ {{ esp.nombre_especialidad }}
+              </span>
+              <div *ngIf="tecnicoEspecialidades.length === 0" style="color: #64748B; font-style: italic;">No tiene habilidades registradas.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VISTA 9: CONFIGURACIÓN / PERFIL -->
+    <!-- ========================================== -->
+    <div class="dashboard-body animate-fade-in" *ngIf="tallerData.estado_aprobacion === 'Aprobado' && currentTab === 'perfil'">
+      <div class="card glass-panel" style="max-width: 600px; margin: 0 auto; padding: 32px; border: 1px solid rgba(255,255,255,0.1);">
+        <h3 style="color: white; margin-bottom: 8px;">Configuración del Taller</h3>
+        <p style="color: #94A3B8; margin-bottom: 24px;">Modifica los canales de soporte e información bancaria.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Teléfono Corporativo</label>
+            <input type="text" [(ngModel)]="perfilEdit.telefono_taller" style="width:100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);" placeholder="Ej. 78945612">
+          </div>
+          <div>
+            <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Número de Cuenta Bancaria</label>
+            <input type="text" [(ngModel)]="perfilEdit.cuenta_bancaria" style="width:100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);" placeholder="Ej. 123-456789-011">
+          </div>
+          
+          <div style="display: flex; gap: 16px;">
+            <div style="flex: 1;">
+              <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Horario Apertura</label>
+              <input type="time" [(ngModel)]="perfilEdit.horario_apertura" style="width:100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+            </div>
+            <div style="flex: 1;">
+              <label style="color: #94A3B8; display: block; margin-bottom: 6px;">Horario Cierre</label>
+              <input type="time" [(ngModel)]="perfilEdit.horario_cierre" style="width:100%; padding: 12px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" (click)="guardarPerfil()" style="margin-top: 12px; padding: 12px; font-size: 1rem; font-weight: 600;">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
     </div>
     </div>
   </main>

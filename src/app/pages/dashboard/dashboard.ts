@@ -37,21 +37,21 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   solicitudes: any[] = [];
   mostrarNotificaciones = false;
   trabajos: any[] = [];
+  serviciosDisponibles: any[] = [];
+  serviciosAsociados: any[] = [];
+  especialidadesDisponibles: any[] = [];
+  tecnicoSeleccionadoParaEsp: any = null;
+  tecnicoEspecialidades: any[] = [];
   
-  serviciosTodos: any[] = [];
-  serviciosSeleccionados: number[] = [];
-  
-  es_24_7 = false;
-  horario_apertura = '08:00';
-  horario_cierre = '19:00';
-  
-  nuevoMecanico = {
-    nombres: '',
-    apellidos: '',
-    ci_tecnico: '',
-    telefono_contacto: '',
-    correo: '',
-    password: ''
+  nuevoServicioId: any = null;
+  nuevoServicioPrecio: number = 50.0;
+  nuevoServicioTiempo: number = 30;
+
+  perfilEdit = {
+    telefono_taller: '',
+    cuenta_bancaria: '',
+    horario_apertura: '08:00:00',
+    horario_cierre: '18:00:00'
   };
 
   creandoMecanico = false;
@@ -155,10 +155,28 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         this.tallerData.estado_aprobacion = data.estado_aprobacion;
         this.tallerData.ubicacion_base_latitud = data.ubicacion_base_latitud;
         this.tallerData.ubicacion_base_longitud = data.ubicacion_base_longitud;
+        
+        // Cargar edición de perfil
+        this.perfilEdit.telefono_taller = data.telefono_taller || '';
+        this.perfilEdit.cuenta_bancaria = data.cuenta_bancaria || '';
+        this.perfilEdit.horario_apertura = data.horario_apertura || '08:00:00';
+        this.perfilEdit.horario_cierre = data.horario_cierre || '18:00:00';
+        
         this.cdr.detectChanges();
       }
     } catch (e) {
       console.error('Error fetching taller info:', e);
+    }
+  }
+
+  changeTab(tab: string) {
+    this.currentTab = tab;
+    if (tab === 'servicios') {
+      this.loadServiciosDisponibles();
+      this.loadTallerServicios();
+    } else if (tab === 'habilidades') {
+      this.loadEspecialidadesDisponibles();
+      this.loadMecanicos();
     }
   }
 
@@ -522,6 +540,86 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     } catch (e) {
       console.error('Error tomando el servicio:', e);
     }
+  }
+
+  async loadServiciosDisponibles() {
+    try {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/servicios-disponibles`);
+      if (response.ok) this.serviciosDisponibles = await response.json();
+    } catch (e) { console.error(e); }
+  }
+
+  async loadTallerServicios() {
+    try {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`);
+      if (response.ok) this.serviciosAsociados = await response.json();
+    } catch (e) { console.error(e); }
+  }
+
+  async vincularServicio() {
+    if (!this.nuevoServicioId) return;
+    try {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_servicio: Number(this.nuevoServicioId),
+          precio: this.nuevoServicioPrecio,
+          tiempo: this.nuevoServicioTiempo
+        })
+      });
+      if (response.ok) {
+        alert('✅ Servicio vinculado al taller.');
+        this.loadTallerServicios();
+      }
+    } catch (e) { console.error(e); }
+  }
+
+  async loadEspecialidadesDisponibles() {
+    try {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/especialidades-disponibles`);
+      if (response.ok) this.especialidadesDisponibles = await response.json();
+    } catch (e) { console.error(e); }
+  }
+
+  async seleccionarTecnicoParaEsp(mec: any) {
+    this.tecnicoSeleccionadoParaEsp = mec;
+    try {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/tecnicos/${mec.id_tecnico}/especialidades`);
+      if (response.ok) this.tecnicoEspecialidades = await response.json();
+    } catch (e) { console.error(e); }
+  }
+
+  async vincularEspecialidad(idEsp: number) {
+    if (!this.tecnicoSeleccionadoParaEsp) return;
+    try {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/tecnicos/${this.tecnicoSeleccionadoParaEsp.id_tecnico}/especialidades`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_especialidad: Number(idEsp) })
+      });
+      if (response.ok) {
+        alert('✅ Habilidad vinculada al técnico.');
+        this.seleccionarTecnicoParaEsp(this.tecnicoSeleccionadoParaEsp);
+      }
+    } catch (e) { console.error(e); }
+  }
+
+  async guardarPerfil() {
+    try {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.perfilEdit)
+      });
+      if (response.ok) {
+        alert('✅ Perfil del taller guardado.');
+        this.tallerData.telefono_taller = this.perfilEdit.telefono_taller;
+        this.tallerData.cuenta_bancaria = this.perfilEdit.cuenta_bancaria;
+        this.tallerData.horario_apertura = this.perfilEdit.horario_apertura;
+        this.tallerData.horario_cierre = this.perfilEdit.horario_cierre;
+      }
+    } catch (e) { console.error(e); }
   }
 
   logout() {
