@@ -673,7 +673,12 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/tecnicos/${mec.id_tecnico}/especialidades`);
       if (response.ok) {
-        this.tecnicoEspecialidades = await response.json();
+        const serverEsp = await response.json() || [];
+        const cached = localStorage.getItem(`tecnico_${mec.id_tecnico}_esp`);
+        const cachedEsp = cached ? JSON.parse(cached) : [];
+        const unicas = new Map();
+        [...serverEsp, ...cachedEsp].forEach(e => unicas.set(e.id_especialidad, e));
+        this.tecnicoEspecialidades = Array.from(unicas.values());
       } else {
         const cached = localStorage.getItem(`tecnico_${mec.id_tecnico}_esp`);
         this.tecnicoEspecialidades = cached ? JSON.parse(cached) : [];
@@ -694,6 +699,11 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         body: JSON.stringify({ id_especialidad: Number(idEsp) })
       });
       if (response.ok) {
+        const espObj = this.especialidadesDisponibles.find(e => e.id_especialidad === idEsp);
+        if (espObj && !this.tecnicoEspecialidades.some(e => e.id_especialidad === idEsp)) {
+          this.tecnicoEspecialidades.push(espObj);
+          localStorage.setItem(`tecnico_${this.tecnicoSeleccionadoParaEsp.id_tecnico}_esp`, JSON.stringify(this.tecnicoEspecialidades));
+        }
         alert('✅ Habilidad vinculada al técnico.');
         this.seleccionarTecnicoParaEsp(this.tecnicoSeleccionadoParaEsp);
       } else {
