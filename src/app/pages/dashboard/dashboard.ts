@@ -351,9 +351,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/trabajos`);
       if (response.ok) {
-        this.trabajos = await response.json();
-        const completados = this.trabajos.filter(t => t.estado === 'Atendido' || t.estado === 'Completado');
-        this.stats.gananciasHoy = completados.reduce((total, t) => total + (t.monto || 0), 0);
+        const allTrabajos = await response.json();
+        this.trabajos = allTrabajos.filter((t: any) => t.estado === 'Atendido' || t.estado === 'Completado');
+        this.stats.gananciasHoy = this.trabajos.reduce((total: any, t: any) => total + (t.monto || 0), 0);
       }
     } catch (error) {
       console.error("Error cargando trabajos:", error);
