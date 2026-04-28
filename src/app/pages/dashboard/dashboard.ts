@@ -140,7 +140,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async fetchTallerInfo(idTaller: number) {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${idTaller}`);
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${idTaller}`);
       if (response.ok) {
         const data = await response.json();
         this.tallerData.razon_social = data.razon_social;
@@ -162,7 +162,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   procesarAlerta(alerta: any) {
-    const baseUrl = `https://backend-fastapi-4g1h.onrender.com`;
+    const baseUrl = `https://backend-fastapi-su7t.onrender.com`;
     this.solicitudes.unshift({
       id_incidente: alerta.id_incidente,
       tipo_problema: alerta.problema,
@@ -224,7 +224,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async guardarHorario() {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}/horario`, {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/horario`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -247,17 +247,17 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async loadServicios() {
     try {
-      const resTodos = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/servicios/todos`);
+      const resTodos = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/servicios/todos`);
       if (resTodos.ok) {
         this.serviciosTodos = await resTodos.json();
       }
 
-      const resSel = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`);
+      const resSel = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`);
       if (resSel.ok) {
         this.serviciosSeleccionados = await resSel.json();
       }
 
-      const resTaller = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}`);
+      const resTaller = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}`);
       if (resTaller.ok) {
         const tData = await resTaller.json();
         this.es_24_7 = tData.es_24_7 || false;
@@ -279,7 +279,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async guardarServicios() {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`, {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ servicios_ids: this.serviciosSeleccionados })
@@ -298,7 +298,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async loadSolicitudes() {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}/solicitudes`);
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/solicitudes`);
       if (response.ok) {
         this.solicitudes = await response.json();
         this.stats.incidentesActivos = this.solicitudes.length;
@@ -310,7 +310,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async loadTrabajos() {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}/trabajos`);
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/trabajos`);
       if (response.ok) {
         this.trabajos = await response.json();
         const completados = this.trabajos.filter(t => t.estado === 'Atendido' || t.estado === 'Completado');
@@ -323,7 +323,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async loadMecanicos() {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}/tecnicos`);
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/tecnicos`);
       if (response.ok) {
         this.mecanicos = await response.json();
         
@@ -359,7 +359,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     this.mecanicoSuccess = false;
 
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}/tecnicos`, {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/tecnicos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -419,7 +419,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     if (this.localFile) formData.append('foto_local', this.localFile);
 
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/${this.tallerData.id_taller}/upload-docs`, {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/upload-docs`, {
         method: 'POST',
         body: formData
       });
@@ -445,7 +445,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     }
 
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/talleres/tecnicos/${mec.id_tecnico}/resetear-password`, {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/tecnicos/${mec.id_tecnico}/resetear-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ new_password: newPass })
@@ -464,7 +464,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async aceptarServicio(solicitud: any) {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/incidentes/${solicitud.id_incidente}/aceptar`, {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/incidentes/${solicitud.id_incidente}/aceptar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
