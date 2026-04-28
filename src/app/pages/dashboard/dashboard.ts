@@ -33,16 +33,42 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     return (words[0][0] + words[1][0]).toUpperCase();
   }
 
+  uploading = false;
+  uploadSuccess = false;
+  nitFile: File | null = null;
+  localFile: File | null = null;
+
+  stats = {
+    incidentesActivos: 0,
+    completadosHoy: 0,
+    gananciasHoy: 0
+  };
+
+  es_24_7 = false;
+  horario_apertura = '08:00';
+  horario_cierre = '19:00';
+
   mecanicos: any[] = [];
   solicitudes: any[] = [];
   mostrarNotificaciones = false;
   trabajos: any[] = [];
   serviciosDisponibles: any[] = [];
+  serviciosTodos: any[] = [];
+  serviciosSeleccionados: number[] = [];
   serviciosAsociados: any[] = [];
   especialidadesDisponibles: any[] = [];
   tecnicoSeleccionadoParaEsp: any = null;
   tecnicoEspecialidades: any[] = [];
-  
+
+  nuevoMecanico = {
+    nombres: '',
+    apellidos: '',
+    ci_tecnico: '',
+    telefono_contacto: '',
+    correo: '',
+    password: ''
+  };
+
   nuevoServicioId: any = null;
   nuevoServicioPrecio: number = 50.0;
   nuevoServicioTiempo: number = 30;
@@ -58,7 +84,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   mecanicoError = '';
   mecanicoSuccess = false;
 
-  constructor(private wsService: WebsocketService, private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(private wsService: WebsocketService, private router: Router, private cdr: ChangeDetectorRef) { }
 
   map: any;
   technicianMarkers: any[] = [];
@@ -155,13 +181,13 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         this.tallerData.estado_aprobacion = data.estado_aprobacion;
         this.tallerData.ubicacion_base_latitud = data.ubicacion_base_latitud;
         this.tallerData.ubicacion_base_longitud = data.ubicacion_base_longitud;
-        
+
         // Cargar edición de perfil
         this.perfilEdit.telefono_taller = data.telefono_taller || '';
         this.perfilEdit.cuenta_bancaria = data.cuenta_bancaria || '';
         this.perfilEdit.horario_apertura = data.horario_apertura || '08:00:00';
         this.perfilEdit.horario_cierre = data.horario_cierre || '18:00:00';
-        
+
         this.cdr.detectChanges();
       }
     } catch (e) {
@@ -210,7 +236,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
       gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
       oscillator.start();
       oscillator.stop(audioCtx.currentTime + 0.5);
@@ -234,18 +260,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   toggleNotificaciones() {
     this.mostrarNotificaciones = !this.mostrarNotificaciones;
-  }
-
-  changeTab(tab: string) {
-    if (this.tallerData.estado_aprobacion === 'Pendiente') return;
-    this.currentTab = tab;
-    if (tab === 'equipo') {
-      this.loadMecanicos();
-    } else if (tab === 'servicios') {
-      this.loadServicios();
-    } else if (tab === 'incidentes' || tab === 'pagos') {
-      this.loadTrabajos();
-    }
   }
 
   async guardarHorario() {
@@ -352,11 +366,11 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/tecnicos`);
       if (response.ok) {
         this.mecanicos = await response.json();
-        
+
         // Limpiar marcadores previos de técnicos
         this.technicianMarkers.forEach((marker: any) => marker.setMap(null));
         this.technicianMarkers = [];
-        
+
         // Graficar Técnicos
         this.mecanicos.forEach(m => {
           if (this.map && m.ubicacion_actual_latitud && m.ubicacion_actual_longitud) {
@@ -398,7 +412,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       // Generación automática del correo corporativo
       const nombreLimpio = this.nuevoMecanico.nombres.toLowerCase().trim().replace(/\s+/g, '');
       const apellidoPaterno = this.nuevoMecanico.apellidos.toLowerCase().trim().split(/\s+/)[0];
-      
+
       let siglasTaller = 't';
       if (this.tallerData.razon_social) {
         const words = this.tallerData.razon_social.trim().split(/\s+/);
@@ -408,7 +422,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
           siglasTaller = (words[0][0] + words[1][0]).toLowerCase();
         }
       }
-      
+
       this.nuevoMecanico.correo = `${nombreLimpio}${apellidoPaterno}_${siglasTaller}@asiscar.com`;
 
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/tecnicos`, {
@@ -437,18 +451,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  nitFile: File | null = null;
-  localFile: File | null = null;
-  uploading = false;
-  uploadSuccess = false;
-
-  // Estadísticas simuladas para el dashboard operativo
-  stats = {
-    incidentesActivos: 3,
-    completadosHoy: 5,
-    gananciasHoy: 1450.00
-  };
-
   // Función exclusiva para desarrollo: permite cambiar de vista rápidamente
   toggleEstado() {
     this.tallerData.estado_aprobacion = this.tallerData.estado_aprobacion === 'Pendiente' ? 'Aprobado' : 'Pendiente';
@@ -464,7 +466,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   async uploadDocumentos() {
     if (!this.nitFile && !this.localFile) return;
-    
+
     this.uploading = true;
     const formData = new FormData();
     if (this.nitFile) formData.append('foto_nit', this.nitFile);
@@ -475,7 +477,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         method: 'POST',
         body: formData
       });
-      
+
       const data = await response.json();
       if (response.ok) {
         this.uploadSuccess = true;
@@ -523,7 +525,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/incidentes/${solicitud.id_incidente}/aceptar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           id_taller: this.tallerData.id_taller,
           id_tecnico: solicitud.id_tecnico_seleccionado
         })
@@ -614,10 +616,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       });
       if (response.ok) {
         alert('✅ Perfil del taller guardado.');
-        this.tallerData.telefono_taller = this.perfilEdit.telefono_taller;
-        this.tallerData.cuenta_bancaria = this.perfilEdit.cuenta_bancaria;
-        this.tallerData.horario_apertura = this.perfilEdit.horario_apertura;
-        this.tallerData.horario_cierre = this.perfilEdit.horario_cierre;
       }
     } catch (e) { console.error(e); }
   }
