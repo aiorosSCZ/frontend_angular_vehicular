@@ -22,7 +22,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     direccion: '',
     estado_aprobacion: 'Pendiente',
     foto_nit_url: null as string | null,
-    foto_local_url: null as string | null
+    foto_local_url: null as string | null,
+    ubicacion_base_latitud: null as number | null,
+    ubicacion_base_longitud: null as number | null
   };
   get initials(): string {
     if (!this.tallerData.razon_social) return 'T';
@@ -79,11 +81,15 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       const mapElement = document.getElementById('map');
       if (!mapElement) return;
 
-      const santaCruz = { lat: -17.7833, lng: -63.1821 };
+      const defaultSantaCruz = { lat: -17.7833, lng: -63.1821 };
+      const workshopCoords = {
+        lat: this.tallerData.ubicacion_base_latitud || defaultSantaCruz.lat,
+        lng: this.tallerData.ubicacion_base_longitud || defaultSantaCruz.lng
+      };
 
       try {
         this.map = new google.maps.Map(mapElement, {
-          center: santaCruz,
+          center: workshopCoords,
           zoom: 13,
           styles: [
             { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
@@ -95,7 +101,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         });
 
         new google.maps.Marker({
-          position: santaCruz,
+          position: workshopCoords,
           map: this.map,
           title: this.tallerData.razon_social || 'Mi Taller',
           icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
@@ -147,6 +153,8 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         this.tallerData.nit = data.nit;
         this.tallerData.direccion = data.direccion_fisica || this.tallerData.direccion;
         this.tallerData.estado_aprobacion = data.estado_aprobacion;
+        this.tallerData.ubicacion_base_latitud = data.ubicacion_base_latitud;
+        this.tallerData.ubicacion_base_longitud = data.ubicacion_base_longitud;
         this.cdr.detectChanges();
       }
     } catch (e) {
