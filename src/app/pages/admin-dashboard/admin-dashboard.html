@@ -9,6 +9,7 @@
       <a class="nav-link" [class.active]="currentTab === 'usuarios'" (click)="changeTab('usuarios')"><span>👥</span> Usuarios</a>
       <a class="nav-link" [class.active]="currentTab === 'talleres'" (click)="changeTab('talleres')"><span>🛠️</span> Talleres</a>
       <a class="nav-link" [class.active]="currentTab === 'incidentes'" (click)="changeTab('incidentes')"><span>🆘</span> Incidentes</a>
+      <a class="nav-link" [class.active]="currentTab === 'bitacora'" (click)="changeTab('bitacora')"><span>📝</span> Logs / Bitácora</a>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-logout" (click)="cerrarSesion()">Cerrar Sesión</button>
@@ -142,8 +143,12 @@
                 </td>
                 <td *ngIf="t.estado_aprobacion === 'Pendiente'">
                   <div class="actions-wrapper">
-                    <button class="btn-action btn-approve" (click)="aprobarTaller(t.id_taller)">Aprobar</button>
-                    <button class="btn-action btn-reject" (click)="rechazarTaller(t.id_taller)">Rechazar</button>
+                    <button class="btn-action btn-approve" [disabled]="procesandoId === t.id_taller" (click)="aprobarTaller(t.id_taller)">
+                      {{ procesandoId === t.id_taller ? '...' : 'Aprobar' }}
+                    </button>
+                    <button class="btn-action btn-reject" [disabled]="procesandoId === t.id_taller" (click)="rechazarTaller(t.id_taller)">
+                      Rechazar
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -151,6 +156,8 @@
           </table>
         </div>
       </div>
+
+
     </div>
 
     <!-- ========================================== -->
@@ -259,6 +266,34 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VISTA 5: BITÁCORA (LOGS) -->
+    <!-- ========================================== -->
+    <div class="data-section animate-fade-in" *ngIf="currentTab === 'bitacora'">
+      <div class="section-card">
+        <div class="section-header">
+          <h3>Historial de Actividad (Bitácora)</h3>
+          <span class="badge badge-info">⏱️ Últimas acciones registradas</span>
+        </div>
+        <div class="timeline-container">
+          <div class="timeline-item" *ngFor="let log of historialAcciones">
+            <div class="timeline-icon">📝</div>
+            <div class="timeline-content">
+              <div class="timeline-header">
+                <span class="timeline-action">{{ log.accion }}</span>
+                <span class="timeline-date">{{ log.fecha_hora | date:'medium' }}</span>
+              </div>
+              <p class="timeline-desc">{{ log.descripcion }}</p>
+              <span class="timeline-user">Realizado por: {{ log.tipo_usuario }}</span>
+            </div>
+          </div>
+          <div *ngIf="historialAcciones.length === 0" class="empty-state">
+            <p>Aún no hay registros en la bitácora.</p>
+          </div>
         </div>
       </div>
     </div>

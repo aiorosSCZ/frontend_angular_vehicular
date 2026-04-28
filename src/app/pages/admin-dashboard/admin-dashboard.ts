@@ -59,6 +59,8 @@ export class AdminDashboard implements OnInit {
     }
   }
 
+  procesandoId: number | null = null;
+
   async loadBitacora() {
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/admin/bitacora`);
@@ -71,6 +73,8 @@ export class AdminDashboard implements OnInit {
   }
 
   async aprobarTaller(id: number) {
+    if (this.procesandoId) return;
+    this.procesandoId = id;
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/admin/talleres/${id}/aprobar`, {
         method: 'POST'
@@ -81,10 +85,15 @@ export class AdminDashboard implements OnInit {
       }
     } catch (e) {
       console.error('Error aprobando taller:', e);
+    } finally {
+      this.procesandoId = null;
+      this.cdr.detectChanges();
     }
   }
 
   async rechazarTaller(id: number) {
+    if (this.procesandoId) return;
+    this.procesandoId = id;
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/admin/talleres/${id}/rechazar`, {
         method: 'POST'
@@ -95,6 +104,9 @@ export class AdminDashboard implements OnInit {
       }
     } catch (e) {
       console.error('Error rechazando taller:', e);
+    } finally {
+      this.procesandoId = null;
+      this.cdr.detectChanges();
     }
   }
 
