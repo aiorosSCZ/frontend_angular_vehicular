@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class AdminDashboard implements OnInit {
   adminName: string = 'Administrador';
+  currentTab: string = 'dashboard';
   stats: any = {
     clientes: 0,
     talleres: 0,
@@ -37,9 +38,14 @@ export class AdminDashboard implements OnInit {
     this.loadBitacora();
   }
 
+  changeTab(tab: string) {
+    this.currentTab = tab;
+    this.cdr.detectChanges();
+  }
+
   async loadMetrics() {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/admin/metrics`);
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/admin/metrics`);
       if (response.ok) {
         const data = await response.json();
         this.stats = data.stats;
@@ -55,7 +61,7 @@ export class AdminDashboard implements OnInit {
 
   async loadBitacora() {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/admin/bitacora`);
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/admin/bitacora`);
       if (response.ok) {
         this.historialAcciones = await response.json();
       }
@@ -66,7 +72,7 @@ export class AdminDashboard implements OnInit {
 
   async aprobarTaller(id: number) {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/admin/talleres/${id}/aprobar`, {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/admin/talleres/${id}/aprobar`, {
         method: 'POST'
       });
       if (response.ok) {
@@ -80,7 +86,7 @@ export class AdminDashboard implements OnInit {
 
   async rechazarTaller(id: number) {
     try {
-      const response = await fetch(`https://backend-fastapi-4g1h.onrender.com/api/admin/talleres/${id}/rechazar`, {
+      const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/admin/talleres/${id}/rechazar`, {
         method: 'POST'
       });
       if (response.ok) {
