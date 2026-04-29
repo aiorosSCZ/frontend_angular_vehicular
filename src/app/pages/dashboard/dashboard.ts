@@ -89,8 +89,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   map: any;
   technicianMarkers: any[] = [];
+  incidentMarkers: any[] = [];
 
   ngAfterViewInit() {
+
     this.initMap();
     this.startDynamicPolling();
   }
@@ -100,8 +102,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   startDynamicPolling() {
     this.pollingInterval = setInterval(() => {
       this.loadMecanicos();
+      this.loadTrabajos();
     }, 10000);
   }
+
 
   initMap() {
     setTimeout(() => {
@@ -154,15 +158,21 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       await this.fetchTallerInfo(this.tallerData.id_taller);
     }
 
+    // Cargar TODO al inicio para evitar vacíos en las pestañas
     this.loadSolicitudes();
     this.loadMecanicos();
+    this.loadServiciosDisponibles();
+    this.loadTallerServicios();
+    this.loadEspecialidadesDisponibles();
+    this.loadTrabajos();
+
     this.wsService.connect(this.tallerData.id_taller);
-    await this.loadServicios();
     this.wsService.emergency$.subscribe((alerta) => {
       this.procesarAlerta(alerta);
     });
     this.initMap();
   }
+
 
   async fetchTallerInfo(idTaller: number) {
     try {
@@ -193,14 +203,25 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     this.currentTab = tab;
     if (tab === 'inicio') {
       this.initMap();
+      this.loadSolicitudes();
+    } else if (tab === 'incidentes') {
+      this.loadSolicitudes();
+    } else if (tab === 'equipo') {
+      this.loadMecanicos();
     } else if (tab === 'servicios') {
       this.loadServiciosDisponibles();
       this.loadTallerServicios();
     } else if (tab === 'habilidades') {
       this.loadEspecialidadesDisponibles();
       this.loadMecanicos();
+    } else if (tab === 'pagos') {
+      this.loadTrabajos();
+    } else if (tab === 'perfil') {
+      this.fetchTallerInfo(this.tallerData.id_taller);
     }
+    this.cdr.detectChanges();
   }
+
 
   ngOnDestroy() {
     this.wsService.disconnect();
@@ -211,6 +232,16 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   procesarAlerta(alerta: any) {
     const baseUrl = `https://backend-fastapi-su7t.onrender.com`;
+    
+    let ai_text = 'Calculando diagnóstico...';
+    if (alerta.evaluacion_ia) {
+      if (typeof alerta.evaluacion_ia === 'object' && alerta.evaluacion_ia.diagnostico_ia) {
+        ai_text = alerta.evaluacion_ia.diagnostico_ia;
+      } else {
+        ai_text = alerta.evaluacion_ia;
+      }
+    }
+
     this.solicitudes.unshift({
       id_incidente: alerta.id_incidente,
       tipo_problema: alerta.problema,
@@ -221,8 +252,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       transcripcion_audio: alerta.transcripcion_audio,
       url_audio_evidencia: alerta.url_audio_evidencia ? `${baseUrl}/${alerta.url_audio_evidencia}` : null,
       url_foto_evidencia: alerta.url_foto_evidencia ? `${baseUrl}/${alerta.url_foto_evidencia}` : null,
-      evaluacion_ia: alerta.evaluacion_ia
+      evaluacion_ia: ai_text
     });
+
     this.stats.incidentesActivos = this.solicitudes.length;
 
     try {
@@ -341,24 +373,53 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       if (response.ok) {
         this.solicitudes = await response.json();
         this.stats.incidentesActivos = this.solicitudes.length;
+        this.cdr.detectChanges();
       }
     } catch (error) {
       console.error("Error cargando solicitudes:", error);
     }
   }
 
+
   async loadTrabajos() {
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/trabajos`);
       if (response.ok) {
         const allTrabajos = await response.json();
-        this.trabajos = allTrabajos.filter((t: any) => t.estado === 'Atendido' || t.estado === 'Completado');
+        // Incluir todos los estados activos en la lista
+        this.trabajos = allTrabajos.filter((t: any) => 
+          ['Aceptado', 'En Camino', 'Atendido', 'Por Pagar', 'Completado'].includes(t.estado)
+        );
         this.stats.gananciasHoy = this.trabajos.reduce((total: any, t: any) => total + (t.monto || 0), 0);
+        this.cdr.detectChanges();
+
+        // Limpiar marcadores previos del cliente
+        this.incidentMarkers.forEach((marker: any) => marker.setMap(null));
+        this.incidentMarkers = [];
+
+        // Graficar Incidentes Activos (Clientes)
+        this.trabajos.forEach(t => {
+          if (this.map && t.latitud && t.longitud && t.estado !== 'Completado') {
+            try {
+              const marker = new google.maps.Marker({
+                position: { lat: parseFloat(t.latitud), lng: parseFloat(t.longitud) },
+                map: this.map,
+                title: `🚗 Auxilio: ${t.cliente} (${t.problema})`,
+                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+              });
+              this.incidentMarkers.push(marker);
+            } catch (e) {
+              console.error('Error cargando incidentes en el mapa:', e);
+            }
+          }
+        });
       }
     } catch (error) {
       console.error("Error cargando trabajos:", error);
     }
   }
+
+
 
   async loadMecanicos() {
     try {
@@ -386,11 +447,13 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
             }
           }
         });
+        this.cdr.detectChanges();
       }
     } catch (error) {
       console.error("Error cargando mecánicos:", error);
     }
   }
+
 
   async registrarMecanico() {
     this.mecanicoError = '';
@@ -546,12 +609,23 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  rechazarServicio(solicitud: any) {
+    if (confirm('¿Estás seguro de que deseas rechazar este auxilio vial?')) {
+      this.solicitudes = this.solicitudes.filter(s => s.id_incidente !== solicitud.id_incidente);
+      this.stats.incidentesActivos = this.solicitudes.length;
+      this.cdr.detectChanges();
+    }
+  }
+
   async loadServiciosDisponibles() {
+
     try {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/servicios/todos`);
       if (response.ok) {
         this.serviciosDisponibles = await response.json();
+        this.cdr.detectChanges();
       } else {
+
         this.serviciosDisponibles = [
           { id_servicio: 1, nombre_servicio: 'Diagnóstico por Escáner y Reparación de Sistemas Eléctricos' },
           { id_servicio: 2, nombre_servicio: 'Mantenimiento de Suspensión, Frenos y Neumáticos' },
@@ -581,7 +655,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/${this.tallerData.id_taller}/servicios`);
       if (response.ok) {
         this.serviciosAsociados = await response.json();
+        this.cdr.detectChanges();
         if (!this.serviciosAsociados || this.serviciosAsociados.length === 0) {
+
           this.serviciosAsociados = [
             { id_servicio: 1, nombre_servicio: 'Diagnóstico por Escáner y Reparación de Sistemas Eléctricos', precio_especifico_taller: 50.0, tiempo_estimado_minutos: 30 },
             { id_servicio: 2, nombre_servicio: 'Mantenimiento de Suspensión, Frenos y Neumáticos', precio_especifico_taller: 40.0, tiempo_estimado_minutos: 25 }
@@ -650,7 +726,9 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       const response = await fetch(`https://backend-fastapi-su7t.onrender.com/api/talleres/especialidades-disponibles`);
       if (response.ok) {
         this.especialidadesDisponibles = await response.json();
+        this.cdr.detectChanges();
       } else {
+
         this.especialidadesDisponibles = [
           { id_especialidad: 1, nombre_especialidad: 'Electricista Automotriz' },
           { id_especialidad: 2, nombre_especialidad: 'Mecánico de Auxilio Rápido' },

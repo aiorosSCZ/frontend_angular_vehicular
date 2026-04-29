@@ -68,20 +68,34 @@
         </span>
         
         <!-- Dropdown flotante de Notificaciones -->
-        <div class="notifications-dropdown glass-panel" *ngIf="mostrarNotificaciones" style="position: absolute; top: 40px; right: 20px; width: 300px; background: #111827; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-          <h4 style="margin: 0 0 12px 0; font-size: 1rem; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">Notificaciones</h4>
+        <div class="notifications-dropdown glass-panel" *ngIf="mostrarNotificaciones" style="position: absolute; top: 45px; right: 0px; width: 320px; background: #1E293B; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          <h4 style="margin: 0 0 12px 0; font-size: 1.1rem; color: #F8FAFC; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+            <span>🔔</span> Alertas en Curso
+          </h4>
           
-          <div class="dropdown-list" style="max-height: 250px; overflow-y: auto;">
-            <div class="dropdown-item" *ngFor="let sol of solicitudes" style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: default;">
-              <div style="font-weight: bold; font-size: 0.9rem; color: #FF0055;">{{ sol.tipo_problema }}</div>
-              <div style="font-size: 0.8rem; color: #94A3B8; margin-top: 2px;">📍 {{ sol.distancia_km }} km | {{ sol.cliente }}</div>
+          <div class="dropdown-list" style="max-height: 300px; overflow-y: auto;">
+            <div class="dropdown-item" *ngFor="let sol of solicitudes" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: default; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 700; font-size: 0.95rem; color: #F1F5F9;">{{ sol.tipo_problema }}</span>
+                <span [style.background]="sol.nivel_prioridad === 'Alta' ? 'rgba(255, 0, 85, 0.15)' : sol.nivel_prioridad === 'Media' ? 'rgba(217, 119, 6, 0.15)' : 'rgba(16, 185, 129, 0.15)'"
+                      [style.color]="sol.nivel_prioridad === 'Alta' ? '#FF0055' : sol.nivel_prioridad === 'Media' ? '#D97706' : '#10B981'"
+                      style="padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">
+                  {{ sol.nivel_prioridad }}
+                </span>
+              </div>
+              <div style="font-size: 0.85rem; color: #CBD5E1; font-weight: 600;">👤 {{ sol.cliente }}</div>
+              <div style="font-size: 0.8rem; color: #94A3B8; display: flex; justify-content: space-between;">
+                <span>🚗 {{ sol.vehiculo }}</span>
+                <span>📍 {{ sol.distancia_km }} km</span>
+              </div>
             </div>
             
-            <div class="empty-dropdown" *ngIf="solicitudes.length === 0" style="text-align: center; color: #64748B; padding: 20px 0; font-size: 0.9rem;">
-              📭 No tienes alertas nuevas
+            <div class="empty-dropdown" *ngIf="solicitudes.length === 0" style="text-align: center; color: #94A3B8; padding: 24px 0; font-size: 0.9rem;">
+              📭 No tienes alertas pendientes
             </div>
           </div>
         </div>
+
       </div>
       
       <div class="status-badge pending" *ngIf="tallerData.estado_aprobacion === 'Pendiente'">
@@ -291,10 +305,14 @@
               </div>
 
               <div class="request-actions" style="display: flex; gap: 12px;">
-                <button class="btn btn-primary btn-sm" style="flex: 1; padding: 10px; background: #FF0055; border: none; color: white; border-radius: 8px; font-weight: 600; cursor: pointer;" [disabled]="sol.procesando" (click)="aceptarServicio(sol)">
-                  {{ sol.procesando ? 'Procesando...' : 'Tomar Servicio' }}
+                <button class="btn btn-primary btn-sm" style="flex: 1; padding: 12px; background: #10B981; border: none; color: white; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;" [disabled]="sol.procesando" (click)="aceptarServicio(sol)">
+                  <span>✅</span> {{ sol.procesando ? 'Procesando...' : 'Aceptar' }}
+                </button>
+                <button class="btn btn-outline-danger btn-sm" style="flex: 1; padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid #EF4444; color: #EF4444; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;" [disabled]="sol.procesando" (click)="rechazarServicio(sol)">
+                  <span>❌</span> Rechazar
                 </button>
               </div>
+
             </div>
 
             <!-- Casos Simulados (Base) -->
