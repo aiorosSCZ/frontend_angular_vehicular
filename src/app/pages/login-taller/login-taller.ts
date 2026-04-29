@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -17,7 +17,11 @@ export class LoginTaller {
   loading: boolean = false;
   errorMsg: string = '';
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(
+    private apiService: ApiService, 
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   onLogin(event: Event) {
     event.preventDefault();
@@ -32,6 +36,8 @@ export class LoginTaller {
     this.apiService.loginTaller({ correo: this.correo, password: this.password }).subscribe({
       next: (response: any) => {
         this.loading = false;
+        this.cdr.detectChanges();
+        
         if (response.role === 'admin') {
           window.location.href = `https://backend-fastapi-4g1h.onrender.com/api/admin/panel`;
         } else {
@@ -47,7 +53,9 @@ export class LoginTaller {
         this.loading = false;
         this.errorMsg = 'Credenciales incorrectas o error en el servidor.';
         console.error(err);
+        this.cdr.detectChanges();
       }
     });
   }
 }
+
