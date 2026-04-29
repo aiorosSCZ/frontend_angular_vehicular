@@ -51,10 +51,11 @@ export class LoginTaller {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMsg = 'Credenciales incorrectas o error en el servidor.';
+        this.errorMsg = err.error?.detail || 'Error en el servidor.';
         console.error(err);
         this.cdr.detectChanges();
       }
+
     });
   }
 }
