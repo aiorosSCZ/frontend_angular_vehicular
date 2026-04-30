@@ -101,6 +101,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   startDynamicPolling() {
     this.pollingInterval = setInterval(() => {
+      this.loadSolicitudes(); // <-- Se añade esto como fallback
       this.loadMecanicos();
       this.loadTrabajos();
     }, 10000);
